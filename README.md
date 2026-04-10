@@ -212,7 +212,7 @@ MVP 이후 확장 목표로 아래 기능들을 순차적으로 추가하기로 
 - [x] 카테고리 탭 필터링
 
 ## 5. 미구현 또는 개선 예정 기능
-시간 이슈
+시간이 부족해서 생략
 - [ ] 마감 날짜순 정렬
 - [ ] 시작일 설정
 - [ ] 시작일/마감일 캘린더 UI 개선
@@ -269,7 +269,26 @@ npm run dev
 - `POST /api/categories`
 - `DELETE /api/categories/:id`
 
-## 8. 어려웠던 점과 해결 방법
+## 8. 배포 준비 메모
+
+현재 프로젝트는 Vercel 배포를 고려해서 아래 구조로 정리했다.
+
+- 프론트엔드: `frontend/`의 Vite 앱
+- 백엔드: `backend/app.js` 기반 Express 앱
+- Vercel serverless 진입점: `backend/api/index.js`
+- 배포 설정 파일: `vercel.json`
+
+배포 시 Vercel 환경변수에 아래 값을 등록해야 한다.
+
+- `MONGODB_URI`
+- `CORS_ORIGIN`
+
+예시:
+
+- `MONGODB_URI=<MongoDB Atlas connection string>`
+- `CORS_ORIGIN=https://your-vercel-domain.vercel.app`
+
+## 9. 어려웠던 점과 해결 방법
 
 이번 프로젝트는 풀스택 작업을 처음부터 끝까지 직접 진행한 첫 경험이어서, 전체 구조를 이해하는 과정 자체가 가장 어려웠다.
 
