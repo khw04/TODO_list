@@ -222,6 +222,16 @@ app.use(
 );
 app.use(express.json());
 
+app.use(async (req, res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    console.error('database connection failed', error);
+    res.status(500).json({ message: 'database connection failed', error: error.message });
+  }
+});
+
 app.get('/todos', async (req, res) => {
   try {
     const now = new Date();
