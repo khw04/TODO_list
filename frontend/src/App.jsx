@@ -92,12 +92,12 @@ function reorderItems(items, fromId, toId) {
 
 function sortTodos(items) {
   return [...items].sort((left, right) => {
-    if (left.completed !== right.completed) {
-      return Number(left.completed) - Number(right.completed);
-    }
-
     if (left.pinned !== right.pinned) {
       return Number(right.pinned) - Number(left.pinned);
+    }
+
+    if (left.completed !== right.completed) {
+      return Number(left.completed) - Number(right.completed);
     }
 
     if (left.order !== right.order) {
@@ -318,7 +318,7 @@ function App() {
     }
 
     const draggedTodo = todos.find((todo) => todo.id === draggedTodoId);
-    if (!draggedTodo || draggedTodo.pinned !== targetTodo.pinned || draggedTodo.completed !== targetTodo.completed) {
+    if (!draggedTodo || draggedTodo.pinned !== targetTodo.pinned) {
       setDraggedTodoId(null);
       return;
     }

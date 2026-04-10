@@ -68,10 +68,10 @@ async function reorderTodosByGroups(orderedIds) {
   const todos = await Todo.find({ _id: { $in: orderedIds } });
   const todoById = new Map(todos.map((todo) => [String(todo._id), todo]));
   const groups = {
-    activePinned: [],
-    activeRegular: [],
     completedPinned: [],
+    activePinned: [],
     completedRegular: [],
+    activeRegular: [],
   };
 
   orderedIds.forEach((id) => {
@@ -80,28 +80,28 @@ async function reorderTodosByGroups(orderedIds) {
       return;
     }
 
-    if (!todo.completed && todo.pinned) {
-      groups.activePinned.push(id);
-      return;
-    }
-
-    if (!todo.completed) {
-      groups.activeRegular.push(id);
-      return;
-    }
-
-    if (todo.pinned) {
+    if (todo.pinned && todo.completed) {
       groups.completedPinned.push(id);
       return;
     }
 
-    groups.completedRegular.push(id);
+    if (todo.pinned) {
+      groups.activePinned.push(id);
+      return;
+    }
+
+    if (todo.completed) {
+      groups.completedRegular.push(id);
+      return;
+    }
+
+    groups.activeRegular.push(id);
   });
 
   const finalIds = [
     ...groups.activePinned,
-    ...groups.activeRegular,
     ...groups.completedPinned,
+    ...groups.activeRegular,
     ...groups.completedRegular,
   ];
 
@@ -194,7 +194,7 @@ app.use(express.json());
 app.get('/api/todos', async (req, res) => {
   try {
     const now = new Date();
-    const todos = await Todo.find().sort({ completed: 1, pinned: -1, order: 1, createdAt: -1 });
+    const todos = await Todo.find().sort({ pinned: -1, completed: 1, order: 1, createdAt: -1 });
 
     const todosToReset = todos.filter((todo) => shouldResetRepeatTodo(todo, now));
 
@@ -275,7 +275,7 @@ app.put('/api/todos/reorder', async (req, res) => {
 
   try {
     await reorderTodosByGroups(orderedIds);
-    const todos = await Todo.find().sort({ completed: 1, pinned: -1, order: 1, createdAt: -1 });
+    const todos = await Todo.find().sort({ pinned: -1, completed: 1, order: 1, createdAt: -1 });
     res.json(todos);
   } catch (error) {
     res.status(500).json({ message: 'failed to reorder todos' });
