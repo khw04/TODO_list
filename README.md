@@ -281,12 +281,14 @@ npm run dev
 배포 시 Vercel 환경변수에 아래 값을 등록해야 한다.
 
 - `MONGODB_URI`
-- `CORS_ORIGIN`
+- `CORS_ORIGIN` (선택)
 
 예시:
 
 - `MONGODB_URI=<MongoDB Atlas connection string>`
 - `CORS_ORIGIN=https://your-vercel-domain.vercel.app`
+
+현재 백엔드는 `https://*.vercel.app` 형식의 프론트 주소를 기본 허용하도록 처리해두었기 때문에, 처음 배포 단계에서는 `CORS_ORIGIN` 없이도 동작할 수 있다. 이후 실제 운영 주소가 정해지면 해당 값을 정확히 넣어 범위를 좁히는 방식으로 관리할 수 있다.
 
 ## 9. 어려웠던 점과 해결 방법
 

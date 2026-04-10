@@ -12,6 +12,18 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
 
 const weekdayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
+function isAllowedOrigin(origin) {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  return /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+}
+
 function normalizeRepeatDays(repeatDays) {
   if (!Array.isArray(repeatDays)) {
     return [];
@@ -200,7 +212,7 @@ async function connectDatabase() {
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         return callback(null, true);
       }
 
