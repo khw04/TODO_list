@@ -67,8 +67,12 @@ async function getNextOrder() {
 async function reorderTodosByGroups(orderedIds) {
   const todos = await Todo.find({ _id: { $in: orderedIds } });
   const todoById = new Map(todos.map((todo) => [String(todo._id), todo]));
-  const pinnedIds = [];
-  const regularIds = [];
+  const groups = {
+    activePinned: [],
+    activeRegular: [],
+    completedPinned: [],
+    completedRegular: [],
+  };
 
   orderedIds.forEach((id) => {
     const todo = todoById.get(id);
@@ -76,15 +80,30 @@ async function reorderTodosByGroups(orderedIds) {
       return;
     }
 
-    if (todo.pinned) {
-      pinnedIds.push(id);
+    if (!todo.completed && todo.pinned) {
+      groups.activePinned.push(id);
       return;
     }
 
-    regularIds.push(id);
+    if (!todo.completed) {
+      groups.activeRegular.push(id);
+      return;
+    }
+
+    if (todo.pinned) {
+      groups.completedPinned.push(id);
+      return;
+    }
+
+    groups.completedRegular.push(id);
   });
 
-  const finalIds = [...pinnedIds, ...regularIds];
+  const finalIds = [
+    ...groups.activePinned,
+    ...groups.activeRegular,
+    ...groups.completedPinned,
+    ...groups.completedRegular,
+  ];
 
   await Promise.all(
     finalIds.map((id, index) =>
@@ -175,7 +194,7 @@ app.use(express.json());
 app.get('/api/todos', async (req, res) => {
   try {
     const now = new Date();
-    const todos = await Todo.find().sort({ pinned: -1, order: 1, createdAt: -1 });
+    const todos = await Todo.find().sort({ completed: 1, pinned: -1, order: 1, createdAt: -1 });
 
     const todosToReset = todos.filter((todo) => shouldResetRepeatTodo(todo, now));
 
@@ -256,7 +275,7 @@ app.put('/api/todos/reorder', async (req, res) => {
 
   try {
     await reorderTodosByGroups(orderedIds);
-    const todos = await Todo.find().sort({ pinned: -1, order: 1, createdAt: -1 });
+    const todos = await Todo.find().sort({ completed: 1, pinned: -1, order: 1, createdAt: -1 });
     res.json(todos);
   } catch (error) {
     res.status(500).json({ message: 'failed to reorder todos' });

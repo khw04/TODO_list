@@ -90,6 +90,24 @@ function reorderItems(items, fromId, toId) {
   return nextItems;
 }
 
+function sortTodos(items) {
+  return [...items].sort((left, right) => {
+    if (left.completed !== right.completed) {
+      return Number(left.completed) - Number(right.completed);
+    }
+
+    if (left.pinned !== right.pinned) {
+      return Number(right.pinned) - Number(left.pinned);
+    }
+
+    if (left.order !== right.order) {
+      return left.order - right.order;
+    }
+
+    return 0;
+  });
+}
+
 function getCategoryMap(categories) {
   return new Map(categories.map((category) => [category.id, category]));
 }
@@ -133,7 +151,7 @@ function App() {
       }
 
       const data = await response.json();
-      setTodos(data.map(normalizeTodo));
+      setTodos(sortTodos(data.map(normalizeTodo)));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -189,7 +207,7 @@ function App() {
       }
 
       const newTodo = normalizeTodo(await response.json());
-      setTodos((currentTodos) => [newTodo, ...currentTodos]);
+      setTodos((currentTodos) => sortTodos([newTodo, ...currentTodos]));
       setTitle('');
       setDueDate('');
       setRepeatDays([]);
@@ -217,7 +235,7 @@ function App() {
 
       const updatedTodo = normalizeTodo(await response.json());
       setTodos((currentTodos) =>
-        currentTodos.map((item) => (item.id === updatedTodo.id ? updatedTodo : item)),
+        sortTodos(currentTodos.map((item) => (item.id === updatedTodo.id ? updatedTodo : item))),
       );
     } catch (err) {
       setError(err.message);
@@ -258,7 +276,7 @@ function App() {
     }
 
     const data = await response.json();
-    setTodos(data.map(normalizeTodo));
+    setTodos(sortTodos(data.map(normalizeTodo)));
   }
 
   async function handlePinToggle(todo) {
@@ -278,7 +296,7 @@ function App() {
       }
 
       const updatedTodo = normalizeTodo(await response.json());
-      const nextTodos = todos.map((item) => (item.id === updatedTodo.id ? updatedTodo : item));
+      const nextTodos = sortTodos(todos.map((item) => (item.id === updatedTodo.id ? updatedTodo : item)));
       await saveTodoOrder(nextTodos);
     } catch (err) {
       setError(err.message);
@@ -300,7 +318,7 @@ function App() {
     }
 
     const draggedTodo = todos.find((todo) => todo.id === draggedTodoId);
-    if (!draggedTodo || draggedTodo.pinned !== targetTodo.pinned) {
+    if (!draggedTodo || draggedTodo.pinned !== targetTodo.pinned || draggedTodo.completed !== targetTodo.completed) {
       setDraggedTodoId(null);
       return;
     }
