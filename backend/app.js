@@ -240,7 +240,8 @@ app.get('/todos', async (req, res) => {
 
     res.json(todos);
   } catch (error) {
-    res.status(500).json({ message: 'failed to load todos' });
+    console.error('failed to load todos', error);
+    res.status(500).json({ message: 'failed to load todos', error: error.message });
   }
 });
 
@@ -249,7 +250,8 @@ app.get('/categories', async (req, res) => {
     const categories = await Category.find().sort({ createdAt: 1 });
     res.json(categories);
   } catch (error) {
-    res.status(500).json({ message: 'failed to load categories' });
+    console.error('failed to load categories', error);
+    res.status(500).json({ message: 'failed to load categories', error: error.message });
   }
 });
 
@@ -265,7 +267,8 @@ app.post('/categories', async (req, res) => {
     const category = await Category.create({ title, color });
     res.status(201).json(category);
   } catch (error) {
-    res.status(500).json({ message: 'failed to create category' });
+    console.error('failed to create category', error);
+    res.status(500).json({ message: 'failed to create category', error: error.message });
   }
 });
 
@@ -291,7 +294,8 @@ app.post('/todos', async (req, res) => {
     });
     res.status(201).json(newTodo);
   } catch (error) {
-    res.status(500).json({ message: 'failed to create todo' });
+    console.error('failed to create todo', error);
+    res.status(500).json({ message: 'failed to create todo', error: error.message });
   }
 });
 
@@ -309,7 +313,8 @@ app.put('/todos/reorder', async (req, res) => {
     const todos = await Todo.find().sort({ pinned: -1, completed: 1, order: 1, createdAt: -1 });
     res.json(todos);
   } catch (error) {
-    res.status(500).json({ message: 'failed to reorder todos' });
+    console.error('failed to reorder todos', error);
+    res.status(500).json({ message: 'failed to reorder todos', error: error.message });
   }
 });
 
@@ -365,7 +370,8 @@ app.put('/todos/:id', async (req, res) => {
 
     res.json(updatedTodo);
   } catch (error) {
-    res.status(500).json({ message: 'failed to update todo' });
+    console.error('failed to update todo', error);
+    res.status(500).json({ message: 'failed to update todo', error: error.message });
   }
 });
 
@@ -390,7 +396,8 @@ app.delete('/categories/:id', async (req, res) => {
 
     res.json({ message: 'deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'failed to delete category' });
+    console.error('failed to delete category', error);
+    res.status(500).json({ message: 'failed to delete category', error: error.message });
   }
 });
 
@@ -408,7 +415,8 @@ app.delete('/todos/:id', async (req, res) => {
 
     res.json({ message: 'deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'failed to delete todo' });
+    console.error('failed to delete todo', error);
+    res.status(500).json({ message: 'failed to delete todo', error: error.message });
   }
 });
 
