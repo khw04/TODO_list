@@ -1,9 +1,10 @@
 require('dotenv').config();
-const { app, connectDatabase } = require('./app');
+const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
 
-connectDatabase()
+app
+  .connectDatabase()
   .then(() => {
     console.log('MongoDB connected');
 

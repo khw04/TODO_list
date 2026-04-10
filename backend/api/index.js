@@ -1,8 +1,8 @@
-const { app, connectDatabase } = require('../app');
+const app = require('../app');
 
 module.exports = async (req, res) => {
   try {
-    await connectDatabase();
+    await app.connectDatabase();
     return app(req, res);
   } catch (error) {
     return res.status(500).json({

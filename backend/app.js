@@ -412,7 +412,6 @@ app.delete('/api/todos/:id', async (req, res) => {
   }
 });
 
-module.exports = {
-  app,
-  connectDatabase,
-};
+app.connectDatabase = connectDatabase;
+
+module.exports = app;
