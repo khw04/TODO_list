@@ -222,7 +222,7 @@ app.use(
 );
 app.use(express.json());
 
-app.get('/api/todos', async (req, res) => {
+app.get('/todos', async (req, res) => {
   try {
     const now = new Date();
     const todos = await Todo.find().sort({ pinned: -1, completed: 1, order: 1, createdAt: -1 });
@@ -244,7 +244,7 @@ app.get('/api/todos', async (req, res) => {
   }
 });
 
-app.get('/api/categories', async (req, res) => {
+app.get('/categories', async (req, res) => {
   try {
     const categories = await Category.find().sort({ createdAt: 1 });
     res.json(categories);
@@ -253,7 +253,7 @@ app.get('/api/categories', async (req, res) => {
   }
 });
 
-app.post('/api/categories', async (req, res) => {
+app.post('/categories', async (req, res) => {
   const title = String(req.body?.title || '').trim();
   const color = normalizeCategoryColor(req.body?.color);
 
@@ -269,7 +269,7 @@ app.post('/api/categories', async (req, res) => {
   }
 });
 
-app.post('/api/todos', async (req, res) => {
+app.post('/todos', async (req, res) => {
   const title = String(req.body?.title || '').trim();
   const dueDate = typeof req.body?.dueDate === 'string' ? req.body.dueDate.trim() : '';
   const repeatDays = normalizeRepeatDays(req.body?.repeatDays);
@@ -295,7 +295,7 @@ app.post('/api/todos', async (req, res) => {
   }
 });
 
-app.put('/api/todos/reorder', async (req, res) => {
+app.put('/todos/reorder', async (req, res) => {
   const orderedIds = Array.isArray(req.body?.orderedIds)
     ? req.body.orderedIds.filter((id) => mongoose.Types.ObjectId.isValid(id))
     : [];
@@ -313,7 +313,7 @@ app.put('/api/todos/reorder', async (req, res) => {
   }
 });
 
-app.put('/api/todos/:id', async (req, res) => {
+app.put('/todos/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: 'invalid todo id' });
   }
@@ -369,7 +369,7 @@ app.put('/api/todos/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/categories/:id', async (req, res) => {
+app.delete('/categories/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: 'invalid category id' });
   }
@@ -394,7 +394,7 @@ app.delete('/api/categories/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/todos/:id', async (req, res) => {
+app.delete('/todos/:id', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ message: 'invalid todo id' });
   }
